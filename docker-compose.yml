@@ -1,5 +1,6 @@
 services:
   crossposter:
-    build: .
+    # build: .
+    image: ghcr.io/gitlimes/ghostposter:latest
     ports:
       - '3000:3000'
