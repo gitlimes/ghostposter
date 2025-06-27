@@ -33,7 +33,13 @@ async function handleWebhook(req) {
   await post(parsedWebhook);
 }
 
-function verifyWebhook(body, signature, timestamp, secret) {
+function verifyWebhook(body, signatureHeader, secret) {
+  const { sha256: signature, t: timestamp } = Object.fromEntries(
+    signatureHeader
+      .split(", ")
+      .map((pair) => pair.split("=").map((item) => item.trim()))
+  );
+
   const computedSignature = crypto
     .createHmac("sha256", secret)
     .update(`${JSON.stringify(body)}${timestamp}`)
@@ -43,17 +49,10 @@ function verifyWebhook(body, signature, timestamp, secret) {
 }
 
 app.post("/hook", express.json(), (req, res) => {
-  const { sha256: signature, t: timestamp } = Object.fromEntries(
-    input.split(", ").map((pair) => pair.split("=").map((item) => item.trim()))
-  );
+  const signatureHeader = req.headers["x-ghost-signature"];
 
   if (
-    !verifyWebhook(
-      req.body,
-      signature,
-      timestamp,
-      process.env.GHOST_WEBHOOK_SECRET
-    )
+    !verifyWebhook(req.body, signatureHeader, process.env.GHOST_WEBHOOK_SECRET)
   ) {
     console.log(
       "\n[WARN] received unauthorized webhook",
