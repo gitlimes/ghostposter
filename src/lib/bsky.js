@@ -1,4 +1,5 @@
 import { AtpAgent, RichText } from "@atproto/api";
+import sharp from "sharp";
 
 export async function login() {
   const agent = new AtpAgent({
@@ -12,34 +13,56 @@ export async function login() {
   return agent;
 }
 
-export async function post(agent, post) {
-  const formattedPost = `${post.title}\n\n${post.url}`;
+export async function post(agent, blogpost, imageQuality = 100) {
+  try {
+    const formattedPost = `${blogpost.title}\n\n${blogpost.url}`;
 
-  const blob = await fetch(post.feature_image).then((r) => r.blob());
-  const { data } = await agent.uploadBlob(blob, { encoding: "image/jpeg" });
+    const blob = await fetch(blogpost.feature_image).then((r) => r.blob());
 
-  const rt = new RichText({
-    text: formattedPost,
-  });
-  await rt.detectFacets(agent);
+    const compressedImage = await sharp(await blob.arrayBuffer())
+      .resize(1200, 675)
+      .jpeg({ quality: imageQuality })
+      .toBuffer();
 
-  await agent.post({
-    $type: "app.bsky.feed.post",
-    text: rt.text,
-    facets: rt.facets,
-    langs: ["en-US"],
-    embed: {
-      $type: "app.bsky.embed.external",
-      external: {
-        uri: post.url,
-        title: post.title,
-        description: post.excerpt,
-        thumb: data.blob,
+    const { data } = await agent.uploadBlob(compressedImage, {
+      encoding: "image/jpeg",
+    });
+
+    const rt = new RichText({
+      text: formattedPost,
+    });
+    await rt.detectFacets(agent);
+
+    await agent.post({
+      $type: "app.bsky.feed.post",
+      text: rt.text,
+      facets: rt.facets,
+      langs: ["en-US"],
+      embed: {
+        $type: "app.bsky.embed.external",
+        external: {
+          uri: blogpost.url,
+          title: blogpost.title,
+          description: blogpost.excerpt,
+          thumb: data.blob,
+        },
       },
-    },
 
-    createdAt: new Date().toISOString(),
-  });
+      createdAt: new Date().toISOString(),
+    });
 
-  console.log(`Bsky : posted ${post.title}`);
+    console.log(`[INFO] Bsky: posted ${blogpost.title}`);
+  } catch (e) {
+    // if the image is too large we set a lower compression level
+    if (e.error === "BlobTooLarge") {
+      console.log(
+        `[WARN] Bsky: image too large, retrying with compression level ${
+          imageQuality - 15
+        }`
+      );
+      await post(agent, blogpost, imageQuality - 15);
+    } else {
+      console.log("[ERROR] Bsky:\n", e);
+    }
+  }
 }

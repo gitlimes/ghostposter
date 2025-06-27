@@ -14,11 +14,15 @@ export async function login() {
 }
 
 export async function post(client, post) {
-  const formattedPost = `${post.title}\n\n${post.url}`;
+  try {
+    const formattedPost = `${post.title}\n\n${post.url}`;
 
-  await client.v2.tweet({
-    text: formattedPost,
-  });
+    await client.v2.tweet({
+      text: formattedPost,
+    });
 
-  console.log(`Twitter: posted ${post.title}`);
+    console.log(`[INFO] Twitter: posted ${post.title}`);
+  } catch (e) {
+    console.log("[ERROR] Twitter:\n", e);
+  }
 }

@@ -1,7 +1,7 @@
 import * as bsky from "./bsky.js";
 import * as twitter from "./twitter.js";
 import * as masto from "./masto.js";
-import * as tumblr from "./tumblr.js";
+//import * as tumblr from "./tumblr.js";
 
 export default async function setUpPostHandlers() {
   const postHandlers = {};

@@ -10,11 +10,15 @@ export async function login() {
 }
 
 export async function post(client, post) {
-  const formattedPost = `${post.title}\n\n${post.url}`;
+  try {
+    const formattedPost = `${post.title}\n\n${post.url}`;
 
-  const status = await client.v1.statuses.create({
-    status: formattedPost,
-  });
+    const status = await client.v1.statuses.create({
+      status: formattedPost,
+    });
 
-  console.log(`Mastodon: posted ${post.title}`);
+    console.log(`[INFO] Mastodon: posted ${post.title}`);
+  } catch (e) {
+    console.log("[ERROR] Mastodon:\n", e);
+  }
 }

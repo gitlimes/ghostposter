@@ -33,5 +33,5 @@ export async function post(client, post) {
     ],
   });
 
-  console.log(`Tumblr: posted ${post.title}`);
+  console.log(`[INFO] Tumblr: posted ${post.title}`);
 }

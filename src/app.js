@@ -20,15 +20,15 @@ async function post(post) {
   //console.log("post =", post);
   postHandlers?.bsky(post);
   postHandlers?.twitter(post);
-  postHandlers?.masto(post)
+  postHandlers?.masto(post);
 }
 
 // parses the webhook and returns some text and the link
 async function handleWebhook(req) {
   // do something with the webhook.
-  console.log("handling webhook", req.body);
+  //console.log("handling webhook", req.body);
   const parsedWebhook = req.body.post.current;
-  console.log("parsedWebhook", parsedWebhook);
+  //console.log("parsedWebhook", parsedWebhook);
 
   await post(parsedWebhook);
 }
