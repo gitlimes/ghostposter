@@ -48,6 +48,10 @@ function verifyWebhook(body, signatureHeader, secret) {
   return computedSignature === signature;
 }
 
+app.get('/hook', (req, res) => {
+  res.status(200).send('ghostposter is listening for webhooks here! https://github.com/gitlimes/ghostposter')
+})
+
 app.post("/hook", express.json(), (req, res) => {
   const signatureHeader = req.headers["x-ghost-signature"];
 
