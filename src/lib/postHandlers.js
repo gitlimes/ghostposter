@@ -1,7 +1,7 @@
 import * as bsky from "./bsky.js";
 import * as twitter from "./twitter.js";
 import * as masto from "./masto.js";
-//import * as tumblr from "./tumblr.js";
+import * as tumblr from "./tumblr.js";
 
 export default async function setUpPostHandlers() {
   const postHandlers = {};
@@ -37,6 +37,17 @@ export default async function setUpPostHandlers() {
     };
   } catch (e) {
     console.log("[ERROR] Masto:\n", e);
+  }
+
+  // tumblr
+  try {
+    const client = await tumblr.login();
+
+    postHandlers.tumblr = (post) => {
+      tumblr.post(client, post);
+    };
+  } catch (e) {
+    console.log("[ERROR] Tumblr:\n", e);
   }
 
   return postHandlers;

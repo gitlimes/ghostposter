@@ -21,6 +21,7 @@ async function post(post) {
   postHandlers?.bsky(post);
   postHandlers?.twitter(post);
   postHandlers?.masto(post);
+  postHandlers?.tumblr(post);
 }
 
 // parses the webhook and returns some text and the link
@@ -72,4 +73,21 @@ app.post("/hook", express.json(), (req, res) => {
 
 app.listen(port, () => {
   console.log(`ghostposter listening on http://localhost:${port}/hook`);
+});
+  excerpt: "Well, not entirely. But they're pretty uncommon now, in 1.1.2",
+  reading_time: 0,
+  og_image: null,
+  og_title: null,
+  og_description: null,
+  twitter_image: null,
+  twitter_title: null,
+  twitter_description: null,
+  meta_title: null,
+  meta_description: null,
+  email_subject: null,
+  frontmatter: null,
+  feature_image_alt: "image alt text",
+  feature_image_caption:
+    '<span style="white-space: pre-wrap;">Photo by </span><a href="https://unsplash.com/@berkayekener?utm_source=ghost&amp;utm_medium=referral&amp;utm_campaign=api-credit"><span style="white-space: pre-wrap;">Berkay Ekener</span></a><span style="white-space: pre-wrap;"> / </span><a href="https://unsplash.com/?utm_source=ghost&amp;utm_medium=referral&amp;utm_campaign=api-credit"><span style="white-space: pre-wrap;">Unsplash</span></a>',
+  email_only: false,
 });

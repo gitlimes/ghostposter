@@ -2,17 +2,17 @@ import * as tumblr from "tumblr.js";
 
 export async function login() {
   const client = tumblr.createClient({
-    consumer_key: "<consumer key>",
-    consumer_secret: "<consumer secret>",
-    token: "<oauth token>",
-    token_secret: "<oauth token secret>",
+    consumer_key: process.env.TUMBLR_CONSUMER_KEY,
+    consumer_secret: process.env.TUMBLR_CONSUMER_SECRET,
+    token: process.env.TUMBLR_TOKEN,
+    token_secret: process.env.TUMBLR_TOKEN_SECRET,
   });
 
   return client;
 }
 
 export async function post(client, post) {
-  await client.createPost(blogName, {
+  await client.createPost(process.env.TUMBLR_BLOG_NAME, {
     content: [
       {
         type: "text",
@@ -20,7 +20,7 @@ export async function post(client, post) {
       },
       {
         type: "text",
-        text: "post.url",
+        text: post.url,
         formatting: [
           {
             start: 0,
